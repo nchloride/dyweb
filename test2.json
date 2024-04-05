@@ -1,0 +1,33 @@
+[
+	{
+		"method":"GET",
+		"name":"/display",
+		"params":["qa","s"],
+		"status":100,
+		"content":"{'test':'test2'}",
+		"headers":[
+			{
+				"header":["Content-type","application/json"]
+			}
+		]
+	},
+	{
+				
+		"method":"POST",
+		"name":"/v1/jsfile",
+		"body":{
+			"name":"string",
+			"query":"string"
+		},
+		"status":200,
+		"headers":[
+			{
+				"header":["Content-Type","text/javascript"]
+			},
+			{
+				"header":["X-Additional-Info","x.com"]
+			}
+		],
+		"content":"(()=>{alert('HACKED!')})()"
+	}
+]

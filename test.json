@@ -1,0 +1,17 @@
+{
+	"endpoints":[
+		{
+			"method":"GET",
+			"name":"display",
+			"params":["q","s"]
+		},
+		{
+			"method":"POST",
+			"name":"sendDisplay",
+			"body":{
+				"name":"string",
+				"query":"string"
+			}
+		}
+	]
+}
