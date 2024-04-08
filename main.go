@@ -31,18 +31,14 @@ type Endpoint struct{
 
 
 
+var (
+	jsonPath string
+	port int
+)
+
 
 func main(){
 
-	var (
-		jsonPath string
-		port int
-	)
-	
-	flag.StringVar(&jsonPath, "json","", "no json file declared")
-	flag.IntVar(&port,"p",8000, "default port")
-	
-	flag.Parse()
 	
 
 	
@@ -66,7 +62,9 @@ func main(){
 		content := ep[i].Content
 		headers := ep[i].Headers
 		http.HandleFunc(pathName,func(w http.ResponseWriter, r *http.Request){
-			fmt.Println(fmt.Sprintf("Endpoint '%v' invoked \n Method used: %v",pathName,method))
+
+			fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+			fmt.Println(fmt.Sprintf("\n \n Endpoint '%v' invoked \n Method used: %v",pathName,r.Method))
 			if method != r.Method {
 				message := fmt.Sprintf("Not a %v endpoint", r.Method)
 				
@@ -87,20 +85,15 @@ func main(){
 					io.Copy(&buffer,body)
 					convertedString := buffer.String()
 					json.Unmarshal([]byte(convertedString),&postBody)
-					fmt.Println(postBody["test2"])
-
+					fmt.Println(postBody)
 
 				}
 			}
 			if len(headers) > 0  {
 				Add := w.Header().Add
 				AddHeaders(headers,&Add)
-//				for index:=0; index<len(headers); index++{
-//					key := headers[index].Header[0]
-//					value := headers[index].Header[1]
-//					w.Header().Add(key,value)
-//				}
 			}
+			fmt.Println(fmt.Sprintf("Request from: %v", r.RemoteAddr))
 			
 			w.WriteHeader(status)
 			w.Write([]byte(content))
@@ -118,4 +111,34 @@ func AddHeaders(headers []EndpointHeaders, Add *func(key, value string)){
 	 	value := headers[index].Header[1]
 	 	(*Add)(key,value)
 	 }
+}
+
+
+func init(){
+	
+	flag.Usage = func() {
+		
+		h:= "Creates webserver with just a command  \n\n"
+
+		h+="Usage: \n\n\n"
+
+		h+="dyweb -p <port_number.  -json <json_config_path>\n\n"
+
+		h+= "JSON Format: \n \n"
+
+		h+= "'pathName' endpoint name <string> \n"
+		h+= "'method' endpoint method <string> \n"
+		h+= "'content' response <string>\n"
+		h+= "'headers' contains an array of 'header' \n"
+		h+= "'header' contains an array that should only have 2 string values, key and value"
+
+		fmt.Fprintf(os.Stderr, h)
+		
+	}
+
+	
+	flag.StringVar(&jsonPath, "json","", "no json file declared")
+	flag.IntVar(&port,"p",8000, "default port")
+	
+	flag.Parse()
 }
