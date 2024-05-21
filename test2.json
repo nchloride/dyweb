@@ -4,10 +4,20 @@
 		"name":"/display",
 		"params":["qa","s"],
 		"status":100,
-		"content":"{'test':'test2'}",
+		"content":"{\"test\":\"\\%22\"}",
+		"urlDecode":true,
 		"headers":[
 			{
 				"header":["Content-type","application/json"]
+			},
+			{
+				"header":["Access-Control-Allow-Origin","*"]
+			},
+			{
+				"header":["Access-Control-Allow-Methods","GET"]
+			},
+			{
+				"header":["Access-Control-Allow-Headers","*"]
 			}
 		]
 	},
