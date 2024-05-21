@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"bytes"
 	"io"
+	"net/url"
 )	
 
 
@@ -26,7 +27,7 @@ type Endpoint struct{
 	Status int `json:"status"`
 	Content string `json:"content"`
 	Headers []EndpointHeaders `json:"headers"`
-
+	UrlDecode bool `json:"urlDecode"`
 }	
 
 
@@ -61,10 +62,19 @@ func main(){
 		status := ep[i].Status
 		content := ep[i].Content
 		headers := ep[i].Headers
+		urlDecode := ep[i].UrlDecode
 		http.HandleFunc(pathName,func(w http.ResponseWriter, r *http.Request){
 
 			fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 			fmt.Println(fmt.Sprintf("\n \n Endpoint '%v' invoked \n Method used: %v",pathName,r.Method))
+
+			if r.Method == "OPTIONS"{
+				w.Header().Add("Access-Control-Allow-Origin", "*")
+				w.Header().Add("Access-Control-Allow-Methods", "GET, POST")
+				w.Header().Add("Access-Control-Allow-Headers", "*")
+
+			}
+
 			if method != r.Method {
 				message := fmt.Sprintf("Not a %v endpoint", r.Method)
 				
@@ -95,6 +105,14 @@ func main(){
 			}
 			fmt.Println(fmt.Sprintf("Request from: %v", r.RemoteAddr))
 			
+			if urlDecode {
+				unescapedContent,err := url.QueryUnescape(content)
+				if err != nil {
+					fmt.Println(err)
+				}
+				content = unescapedContent
+			}
+
 			w.WriteHeader(status)
 			w.Write([]byte(content))
 
